@@ -1,5 +1,6 @@
 import json, os
 from datetime import datetime
+
 from fastapi import FastAPI, WebSocket, WebSocketDisconnect, Request
 from fastapi.templating import Jinja2Templates
 from fastapi.staticfiles import StaticFiles
@@ -8,6 +9,7 @@ from db import DB
 from manager import Manager
 
 app = FastAPI()
+
 db = DB()
 mgr = Manager()
 
@@ -17,7 +19,10 @@ app.mount("/static", StaticFiles(directory="static"), name="static")
 
 @app.get("/")
 async def home(request: Request):
-    return templates.TemplateResponse("index.html", {"request": request})
+    return templates.TemplateResponse(
+        "index.html",
+        {"request": request}
+    )
 
 
 async def send_users():
@@ -41,12 +46,14 @@ async def ws(websocket: WebSocket):
             data = json.loads(await websocket.receive_text())
             t = data.get("type")
 
+            # REGISTER
             if t == "register":
                 ok = db.register(data.get("name"), data.get("password"))
                 await websocket.send_text(json.dumps({
                     "type": "register_ok" if ok else "register_fail"
                 }))
 
+            # LOGIN
             elif t == "login":
                 ok = db.login(data.get("name"), data.get("password"))
 
@@ -58,6 +65,7 @@ async def ws(websocket: WebSocket):
                     "type": "login_ok" if ok else "login_fail"
                 }))
 
+            # DM
             elif t == "dm":
                 sender = mgr.get_name(websocket)
                 target = mgr.get_ws(data.get("to"))
@@ -77,6 +85,7 @@ async def ws(websocket: WebSocket):
                         "time": time
                     }))
 
+            # ROOM
             elif t == "room":
                 sender = mgr.get_name(websocket)
 
