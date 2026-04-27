@@ -7,15 +7,15 @@
 
 <body>
 
-<div class="login" id="login">
-    <h2>Chat Pro</h2>
+<div id="login" class="login">
+    <h2>Chat App</h2>
     <input id="name" placeholder="Username">
     <input id="pass" type="password" placeholder="Password">
     <button onclick="login()">Login</button>
     <button onclick="register()">Register</button>
 </div>
 
-<div class="app" id="app">
+<div id="app" class="app">
 
     <div class="sidebar">
         <h3>Users</h3>
@@ -23,11 +23,11 @@
     </div>
 
     <div class="chat">
-        <div class="chat-header" id="title">Global Chat</div>
-        <div class="messages" id="chat"></div>
+        <div id="title">Global Chat</div>
+        <div id="chat" class="messages"></div>
 
         <div class="input-box">
-            <input id="msg" placeholder="Type message...">
+            <input id="msg" placeholder="message">
             <button onclick="send()">Send</button>
         </div>
     </div>
