@@ -13,8 +13,12 @@ app = FastAPI()
 db = DB()
 mgr = Manager()
 
+# এখানে সামান্য পরিবর্তন - directory পাথ confirm করুন
 templates = Jinja2Templates(directory="templates")
 app.mount("/static", StaticFiles(directory="static"), name="static")
+
+# ওপশনাল: cache সমস্যা হলে এই লাইন যোগ করুন
+templates.env.cache_size = 0  # development এর জন্য
 
 
 @app.get("/")
@@ -27,6 +31,7 @@ async def home(request: Request):
 
 async def send_users():
     users = mgr.users()
+    # কপি করে লুপ চালান
     for ws in list(mgr.name_to_ws.values()):
         try:
             await ws.send_text(json.dumps({
@@ -103,6 +108,7 @@ async def ws(websocket: WebSocket):
                     "time": time
                 })
 
+                # কপি করে লুপ চালান
                 for ws_client in list(mgr.name_to_ws.values()):
                     try:
                         await ws_client.send_text(msg)
